@@ -66,9 +66,20 @@ username = input('Username: ')
 password = input('Password: ')
 user = ds.login_check(username, password)
 win = pygame.display.set_mode((1212, 608))
-bg = pygame.image.load('bg.png')
-animation = [pygame.image.load('player_ship0.png'), pygame.image.load('player_ship1.png'),pygame.image.load('player_ship2.png')]
+space = pygame.image.load('bg_0-1.png (1).png')
+ui = [pygame.image.load('bg_new_0.png'), pygame.image.load('bg_new_1.png'),pygame.image.load('bg_new_2.png'),pygame.image.load('bg_new_3.png')]
 
+#this convoluted mess of variables makes the player the bigger.
+pa1 = pygame.image.load('player_ship0.png')
+pa2 = pygame.image.load('player_ship1.png')
+pa3 = pygame.image.load('player_ship2.png')
+
+
+
+
+animation = [pygame.transform.scale(pa1, (128, 128)), pygame.transform.scale(pa2, (128, 128)), pygame.transform.scale(pa3, (128, 128))]
+
+ # pygame.transform.scale(look_1, (new_width, new_height))
 
 # player class
 class player(object):
@@ -99,21 +110,32 @@ class midEnemy(object):
         self.height = height
         self.animation = [pygame.image.load("enemy_ship0.png")]
 
+bgcount = 0
+
 
 
 
 def redrawGameWindow():
-    win.blit(bg, (0,0))
+    win.blit(space, (0,0))
+    win.blit(ui[bgcount],(0,0))
     ship.draw(win)
 
     pygame.display.update()
     
 
 # variables
+clock = pygame.time.Clock()
 run = True
 ship = player(500, 300, 32, 32)
 # main loop:
 while run:
+    bgcount += 1
+    if bgcount > 3:
+        bgcount = 0
+
+    clock.tick(12)
+    
+
 
     #closes the game safely
     for event in pygame.event.get():
@@ -136,6 +158,8 @@ while run:
     # calls the code we wrote before that blits objects onto the window.
     redrawGameWindow()
 
+
+pygame.quit
 
 pygame.quit
 
