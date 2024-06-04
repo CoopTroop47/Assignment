@@ -100,33 +100,210 @@ class player(object):
         win.blit(animation[self.flyCount], (self.x,self.y))
 
 class midEnemy(object):
+    def __init__(self,x,y,width,height, end, basey):
+        self.x = x
+        self.y = y 
+        self.aniCount = -1
+        self.end = end 
+        self.path = [end, self.y, self.x]
+        self.width = width
+        self.height = height
+        self.vel = 8
+        self.basey = basey
+        self.ea1 = pygame.image.load("enemy_ship0.png")
+        self.ea2 = pygame.image.load("enemy_ship1.png")
+        self.ea3 = pygame.image.load("enemy_ship2.png")
+        self.animation = [pygame.transform.scale(self.ea1, (96, 96)), pygame.transform.scale(self.ea2, (96, 96)), pygame.transform.scale(self.ea3, (96, 96))]
+    def draw(self, win):
+        self.move()
+        if self.aniCount >= 2:
+            self.aniCount = -1
+        self.aniCount += 1
+        win.blit(self.animation[self.aniCount], (self.x,self.y))
+    def move(self):
+        if self.vel > 0:
+            if self.x < self.path[2] + self.vel:
+                self.x += self.vel
+                if self.y != 10:
+                    self.y -= self.vel
+            else: 
+                self.vel = self.vel * -1
+                self.x += self.vel
+                #self.y -= self.vel
+        elif score > 200:
+            if self.x + self.vel > self.path[0]:
+                self.x += self.vel
+                #self.y -= self.vel
+            else:
+                self.vel = self.vel * -1
+                self.x += self.vel
+                self.y += self.vel
+        else:
+            if self.x + self.vel > self.path[0]:
+                self.x += self.vel
+            else:
+                self.vel = self.vel * -1
+                self.x += self.vel
+                self.y += self.vel
+
+        if score == 200 or 400 or 600:
+            self.y = self.basey
+
+
+
+class bigEnemy(object):
     def __init__(self,x,y,width,height, end, ):
         self.x = x
         self.y = y 
         self.aniCount = -1
         self.end = end 
-        self.path = [self.x, self.y, end]
+        self.path = [end, self.y, self.x]
         self.width = width
         self.height = height
-        self.animation = [pygame.image.load("enemy_ship0.png")]
+        self.vel = 8
+        self.ea1 = pygame.image.load("Enemy_Large_0.png")
+        self.ea2 = pygame.image.load("Enemy_Large_1.png")
+        self.ea3 = pygame.image.load("Enemy_Large_2.png")
+        self.animation = [pygame.transform.scale(self.ea1, (96, 96)), pygame.transform.scale(self.ea2, (96, 96)), pygame.transform.scale(self.ea3, (96, 96))]
+    def draw(self, win):
+        self.move()
+        if self.aniCount >= 2:
+            self.aniCount = -1
+        self.aniCount += 1
+        win.blit(self.animation[self.aniCount], (self.x,self.y))
+    def move(self):
+            if self.vel > 0:
+                if self.x < self.path[2] + self.vel:
+                    self.x += self.vel
+
+                else: 
+                    self.vel = self.vel * -1
+                    self.x += self.vel
+                    
+            else:
+                if self.x + self.vel > self.path[0]:
+                    self.x += self.vel
+                    
+                else:
+                    self.vel = self.vel * -1
+                    self.x += self.vel
+                    
+
+
+
+class boss(object):
+    def __init__(self,x,y,width,height, end, ):
+        self.x = x
+        self.y = y 
+        self.aniCount = -1
+        self.end = end 
+        self.path = [end, self.y, self.x]
+        self.width = width
+        self.height = height
+        self.vel = 8
+        self.ea1 = pygame.image.load("Enemy_massive_0.png")
+        self.ea2 = pygame.image.load("Enemy_massive_1.png")
+        self.ea3 = pygame.image.load("Enemy_massive_2.png")
+        self.animation = [pygame.transform.scale(self.ea1, (96, 96)), pygame.transform.scale(self.ea2, (96, 96)), pygame.transform.scale(self.ea3, (96, 96))]
+    def draw(self, win):
+        if score > 600:
+            self.move()
+            if self.aniCount >= 2:
+                self.aniCount = -1
+            self.aniCount += 1
+            win.blit(self.animation[self.aniCount], (self.x,self.y))
+    def move(self):
+            if self.vel > 0:
+                if self.x < self.path[2] + self.vel:
+                    self.x += self.vel
+
+                else: 
+                    self.vel = self.vel * -1
+                    self.x += self.vel
+                    
+            else:
+                if self.x + self.vel > self.path[0]:
+                    self.x += self.vel
+                    
+                else:
+                    self.vel = self.vel * -1
+                    self.x += self.vel
+                    
+
+class drone(object):
+    def __init__(self,x,y,width,height, end,):
+            self.x = x
+            self.y = y 
+            self.aniCount = -1
+            self.end = end 
+            self.path = [end, self.y, self.x]
+            self.width = width
+            self.height = height
+            self.vel = 8
+            self.ea1 = pygame.image.load("drone_0.png")
+            self.ea2 = pygame.image.load("drone_1.png")
+            self.ea3 = pygame.image.load("drone_2.png")
+            self.animation = [pygame.transform.scale(self.ea1, (96, 96)), pygame.transform.scale(self.ea2, (96, 96)), pygame.transform.scale(self.ea3, (96, 96))]
+    def draw(self, win):
+        self.move()
+        if self.aniCount >= 2:
+            self.aniCount = -1
+        self.aniCount += 1
+        win.blit(self.animation[self.aniCount], (self.x,self.y))
+    def move(self):
+            if self.vel > 0:
+                if self.x < self.path[2] + self.vel:
+                    self.x += self.vel
+                    #if self.y != 10:
+                        #self.y -= self.vel
+                else: 
+                    self.vel = self.vel * -1
+                    self.x += self.vel
+                    #self.y -= self.vel
+            elif score > 200:
+                if self.x + self.vel > self.path[0]:
+                    self.x += self.vel
+                    #self.y -= self.vel
+                else:
+                    self.vel = self.vel * -1
+                    self.x += self.vel
+                    #self.y += self.vel
+            else:
+                if self.x + self.vel > self.path[0]:
+                    self.x += self.vel
+                else:
+                    self.vel = self.vel * -1
+                    self.x += self.vel
+                    #self.y += self.vel
 
 class projectile(object):
-    def __init__(self,x,y):
+    def __init__(self, x, y,):
         self.x = x
         self.y = y
         self.bullet_ani = [pygame.image.load("projectile_1.png"), pygame.image.load("projectile_0.png"), pygame.image.load("projectile_2.png"), pygame.image.load("projectile_3.png"), pygame.image.load("projectile_4.png"), pygame.image.load("projectile_5.png"), pygame.image.load("projectile_6.png")]
         self.bulletCount = 0
         self.vel = 8 
+        self.fire = False
 
-    def draw(self,):
-        #sometimes i wish i didn't want to animate litterally everything
-        if self.bulletCount >= 7:
-            self.bulletCount = 0
-        self.bulletCount += 1
-        win.blit(self.bullet_ani[self.bulletCount], (self.x) (self.y))
+    def draw(self, win):
+        if self.fire == True:
+            if self.bulletCount >= 6:
+                self.bulletCount = 0
+            self.bulletCount += 1
+            self.move()
+            win.blit(self.bullet_ani[self.bulletCount], (self.x, self.y))
+    def move(self):
+        self.x += self.vel
+        if bullet.x > 1200:
+             bullets.pop(bullets.index(bullet))
 
+        
+        
+
+#These variables has to go up here. I don't know why but pygame likes it this way.
 bgcount = 0
-
+ship = player(500, 300, 32, 32)
+bullet = projectile(ship.x, ship.y)
 
 
 
@@ -136,34 +313,50 @@ def redrawGameWindow():
 
     #I have had SO MANY ERRORS
     #this section is the BANE of my existance
+    
     win.blit(space, (0,0))
     win.blit(ui[bgcount],(0,0))
     ship.draw(win)
+    enemy1.draw(win)
+    enemy2.draw(win)
+    enemybig[0].draw(win) 
+    enemybig[1].draw(win)
+    enemybig[2].draw(win)
     for bullet in bullets:
         bullet.draw(win)
+    print(score)
+    drones[0].draw(win)
+    drones[1].draw(win)
+    drones[2].draw(win)
+    drones[3].draw(win)
+    enemyboss.draw(win)
 
     pygame.display.update()
     
 
 # variables
+score = 0
 clock = pygame.time.Clock()
 run = True
-ship = player(500, 300, 32, 32)
-bullet = projectile(32, 32)
+enemyboss = boss(1100, 200, 92, 92, 500)
+enemy1 = midEnemy(1000, 100, 92, 92, 200, 100)
+enemy2 = midEnemy(1000, 300, 92, 92, 200, 300)
+enemybig = [bigEnemy(1000, 350, 92, 92, 300), bigEnemy(900, 200, 92, 92, 300), bigEnemy(1000, 60, 92, 92, 300) ]
+#I want a lot of these ones, so i made a list!
+drones = [drone(800, 250, 32, 32, 300, ), drone(9000, 200, 32, 32, 300, ), drone(9000, 100, 32, 32, 300,) , drone(800, 150, 32, 32, 300, )]
+
 bullets = []
+
 shootloop = 0
 # main loop:
 while run:
+    score += 1
     if shootloop > 0:
         shootloop += 1
     if shootloop > 3:
         shootloop = 0
 
-    for bullet in bullets:
-        if bullet.x < 500 and bullet.x > 0: #if on the screen
-            bullet.x += bullet.vel #move the bullet by its vel (negative or positive)
-        else:
-            bullets.pop(bullets.index(bullet)) #else delete from the list
+    
 
 
     bgcount += 1
@@ -192,10 +385,11 @@ while run:
         ship.x += ship.vel
 
     if keys[pygame.K_SPACE] and shootloop == 0:
-  
+        bullet.fire = True
+        bullets.append(projectile(ship.x, ship.y))
             
         
-        bullets.append(projectile(round(ship.x + ship.width //2), round(ship.y + ship.height//2),))
+       
 
             
 
@@ -203,5 +397,7 @@ while run:
     # calls the code we wrote before that blits objects onto the window.
     redrawGameWindow()
 
+
+pygame.quit
 
 pygame.quit
