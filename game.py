@@ -76,10 +76,10 @@ pa3 = pygame.image.load('player_ship2.png')
 
 
 
+#beeg animation
+animation = [pygame.transform.scale(pa1, (96, 96)), pygame.transform.scale(pa2, (96, 96)), pygame.transform.scale(pa3, (96, 96))]
 
-animation = [pygame.transform.scale(pa1, (128, 128)), pygame.transform.scale(pa2, (128, 128)), pygame.transform.scale(pa3, (128, 128))]
 
- # pygame.transform.scale(look_1, (new_width, new_height))
 
 # player class
 class player(object):
@@ -102,7 +102,7 @@ class player(object):
 class midEnemy(object):
     def __init__(self,x,y,width,height, end, ):
         self.x = x
-        self.y = y
+        self.y = y 
         self.aniCount = -1
         self.end = end 
         self.path = [self.x, self.y, end]
@@ -110,15 +110,37 @@ class midEnemy(object):
         self.height = height
         self.animation = [pygame.image.load("enemy_ship0.png")]
 
+class projectile(object):
+    def __init__(self,x,y):
+        self.x = x
+        self.y = y
+        self.bullet_ani = [pygame.image.load("projectile_1.png"), pygame.image.load("projectile_0.png"), pygame.image.load("projectile_2.png"), pygame.image.load("projectile_3.png"), pygame.image.load("projectile_4.png"), pygame.image.load("projectile_5.png"), pygame.image.load("projectile_6.png")]
+        self.bulletCount = 0
+        self.vel = 8 
+
+    def draw(self,):
+        #sometimes i wish i didn't want to animate litterally everything
+        if self.bulletCount >= 7:
+            self.bulletCount = 0
+        self.bulletCount += 1
+        win.blit(self.bullet_ani[self.bulletCount], (self.x) (self.y))
+
 bgcount = 0
 
 
 
 
 def redrawGameWindow():
+    
+    #All the things that run at the end
+
+    #I have had SO MANY ERRORS
+    #this section is the BANE of my existance
     win.blit(space, (0,0))
     win.blit(ui[bgcount],(0,0))
     ship.draw(win)
+    for bullet in bullets:
+        bullet.draw(win)
 
     pygame.display.update()
     
@@ -127,8 +149,23 @@ def redrawGameWindow():
 clock = pygame.time.Clock()
 run = True
 ship = player(500, 300, 32, 32)
+bullet = projectile(32, 32)
+bullets = []
+shootloop = 0
 # main loop:
 while run:
+    if shootloop > 0:
+        shootloop += 1
+    if shootloop > 3:
+        shootloop = 0
+
+    for bullet in bullets:
+        if bullet.x < 500 and bullet.x > 0: #if on the screen
+            bullet.x += bullet.vel #move the bullet by its vel (negative or positive)
+        else:
+            bullets.pop(bullets.index(bullet)) #else delete from the list
+
+
     bgcount += 1
     if bgcount > 3:
         bgcount = 0
@@ -154,18 +191,17 @@ while run:
     if keys[pygame.K_RIGHT]:
         ship.x += ship.vel
 
+    if keys[pygame.K_SPACE] and shootloop == 0:
+  
+            
+        
+        bullets.append(projectile(round(ship.x + ship.width //2), round(ship.y + ship.height//2),))
+
+            
+
 
     # calls the code we wrote before that blits objects onto the window.
     redrawGameWindow()
 
 
 pygame.quit
-
-pygame.quit
-
-
-
-
-
-
-
