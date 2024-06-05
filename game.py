@@ -93,15 +93,25 @@ class player(object):
         self.flyCount = -1
         self.hitbox = (self.x + 20, self.y, 92, 92)
         self.visible = True
+        self.iframes = 0
        
 # this is so pygame knows what to draw
     def draw(self, win):
-        if self.flyCount >= 2:
-            self.flyCount = -1
-        self.flyCount += 1
-        win.blit(animation[self.flyCount], (self.x,self.y))
-        self.hitbox = (self.x + 35, self.y + 25, 40, 40)
-        #pygame.draw.rect(win, (255, 0, 0), self.hitbox, 2)
+        if self.visible == True:
+            if self.flyCount >= 2:
+                self.flyCount = -1
+            self.flyCount += 1
+            win.blit(animation[self.flyCount], (self.x,self.y))
+            self.hitbox = (self.x + 35, self.y + 25, 40, 40)
+            #pygame.draw.rect(win, (255, 0, 0), self.hitbox, 2)
+
+    def hit(self,):
+        print('hit')
+        if hearts.hits < 3:
+            hearts.hits += 1
+        else: 
+            self.visible = False
+        self.iframes += 10
 
 class midEnemy(object):
     def __init__(self,x,y,width,height, end, basey):
@@ -325,10 +335,11 @@ class drone(object):
                     #self.y += self.vel
     def hit(self):
         print('hit')
-        if self.health > 0:
+        if self.health >= 0:
             self.health -= 1
         else: 
             self.visible = False
+        
 
 class projectile(object):
     def __init__(self, x, y,):
@@ -364,6 +375,9 @@ class healthui(object):
         self.y = y
     def draw(self, win):
         win.blit(self.hp[self.hits], (self.x, self.y))
+    #The player hp actually goes down here
+    #i wanted a visual representation of health
+    #so no need for the player to have it's own hp variable
 
         
         
@@ -419,6 +433,7 @@ drones = [drone(950, 250, 32, 32, 200, ), drone(800, 390, 32, 32, 300, ), drone(
 bullets = []
 
 
+
 shootloop = 0
 # main loop:
 while run:
@@ -427,67 +442,48 @@ while run:
         shootloop += 1
     if shootloop > 15:
         shootloop = 0
+    if ship.iframes > 0:
+        ship.iframes -= 1
+
     for bullet in bullets:
-            if bullet.x < 1200 and bullet.x > 0: #if on the screen
-                #I forgot the code that does nothing
-                hi = "this means nothing"
-            else:
-                bullets.pop(bullets.index(bullet)) #else delete from the list
+        if bullet.x < 1200 and bullet.x > 0: # If bullet is on the screen
+            # collision with enemies:
+            for enemy in [enemy1, enemy2] + drones + enemybig + [enemyboss]:
+                if enemy.visible:
+                    #I had like 8 billion lines of code to do this
+                    # I figured out i could just put everything in lists
+                    # so i did the tried and true method of making variables and lists until it works
+                    if (bullet.y < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y > enemy.hitbox[1] and bullet.x > enemy.hitbox[0] and bullet.x < enemy.hitbox[0] + enemy.hitbox[2]):
+                        # hits:
+                        if enemy in [enemy1, enemy2, enemyboss]:
+                            enemy.hit()
+                            score += 100 if enemy in [enemy1, enemy2] else 500
+                            bullets.pop(bullets.index(bullet))
+                        else:
+                            enemy.hit()
+                            score += 50
+                            bullets.pop(bullets.index(bullet))
+                        
+                        #I know you don't like breaks.
+                        #oh well.
+                        break
+        #this deletes bullets that go off-screen           
+        else:
+            bullets.pop(bullets.index(bullet))
 
-            # there is probably a more efficent way to handle collision.
-            # But this works. Regardless of how many lines it takes.
-            
-            if bullet.y < enemy1.hitbox[1] + enemy1.hitbox[3] and bullet.y > enemy1.hitbox[1]:
-                    if bullet.x > enemy1.hitbox[0] and bullet.x < enemy1.hitbox [0] + enemy1.hitbox[2] and enemy1.visible == True:
-                        enemy1.hit()
-                        score += 100
-                        bullets.pop(bullets.index(bullet))
 
-            if bullet.y < enemy2.hitbox[1] + enemy2.hitbox[3] and bullet.y + bullet.x > enemy2.hitbox[1]:
-                        if bullet.x > enemy2.hitbox[0] and bullet.x < enemy2.hitbox [0] + enemy2.hitbox[2] and enemy2.visible == True:
-                            enemy2.hit()
-                            score += 100
-                            bullets.pop(bullets.index(bullet))
-            if bullet.y < drones[0].hitbox[1] + drones[0].hitbox[3] and bullet.y + bullet.x > drones[0].hitbox[1]:
-                        if bullet.x > drones[0].hitbox[0] and bullet.x < drones[0].hitbox [0] + drones[0].hitbox[2] and drones[0].visible == True:
-                            drones[0].hit()
-                            score += 50
-                            bullets.pop(bullets.index(bullet))
-            if bullet.y < drones[1].hitbox[1] + drones[1].hitbox[3] and bullet.y + bullet.x > drones[1].hitbox[1]:
-                        if bullet.x > drones[1].hitbox[0] and bullet.x < drones[1].hitbox[0] + drones[1].hitbox[2] and drones[1].visible == True:
-                            drones[1].hit()
-                            score += 50
-                            bullets.pop(bullets.index(bullet))
-            if bullet.y < drones[2].hitbox[1] + drones[2].hitbox[3] and bullet.y + bullet.x > drones[2].hitbox[1]:
-                        if bullet.x > drones[2].hitbox[0] and bullet.x < drones[2].hitbox[0] + drones[2].hitbox[2] and drones[2].visible == True:
-                            drones[2].hit()
-                            score += 50
-                            bullets.pop(bullets.index(bullet))
-            if bullet.y < drones[3].hitbox[1] + drones[3].hitbox[3] and bullet.y + bullet.x > drones[3].hitbox[1]:
-                    if bullet.x > drones[3].hitbox[0] and bullet.x < drones[3].hitbox[0] + drones[3].hitbox[2] and drones[3].visible == True:
-                        drones[3].hit()
-                        score += 50
-                        bullets.pop(bullets.index(bullet))
-            if bullet.y < enemybig[0].hitbox[1] + enemybig[0].hitbox[3] and bullet.y + bullet.x > enemybig[0].hitbox[1]:
-                    if bullet.x > enemybig[0].hitbox[0] and bullet.x < enemybig[0].hitbox[0] + enemybig[0].hitbox[2] and enemybig[0].visible == True:
-                        enemybig[0].hit()
-                        score += 200
-                        bullets.pop(bullets.index(bullet))
-            if bullet.y < enemybig[1].hitbox[1] + enemybig[1].hitbox[3] and bullet.y + bullet.x > enemybig[1].hitbox[1]:
-                    if bullet.x > enemybig[1].hitbox[0] and bullet.x < enemybig[1].hitbox[0] + enemybig[1].hitbox[2] and enemybig[1].visible == True:
-                        enemybig[1].hit()
-                        score += 200
-                        bullets.pop(bullets.index(bullet))
-            if bullet.y < enemybig[2].hitbox[1] + enemybig[2].hitbox[3] and bullet.y + bullet.x > enemybig[2].hitbox[1]:
-                    if bullet.x > enemybig[2].hitbox[0] and bullet.x < enemybig[2].hitbox[0] + enemybig[2].hitbox[2] and enemybig[2].visible == True:
-                        enemybig[2].hit()
-                        score += 200
-                        bullets.pop(bullets.index(bullet))
-            if bullet.y < enemyboss.hitbox[1] + enemyboss.hitbox[3] and bullet.y + bullet.x > enemyboss.hitbox[1]:
-                        if bullet.x > enemyboss.hitbox[0] and bullet.x < enemyboss.hitbox[0] + enemyboss.hitbox[2] and enemyboss.visible == True:
-                            enemyboss.hit()
-                            score += 500
-                            bullets.pop(bullets.index(bullet))
+
+        # Handle collision with ship
+    if ship.iframes == 0 and ship.visible:
+        # had issues with the player dying too quickly.
+        # so i added i-frames,
+        for enemy in [enemy1, enemy2] + drones + enemybig + [enemyboss]:
+            if (ship.y > enemy.hitbox[1] and ship.y < enemy.hitbox[1] + enemy.hitbox[3] and ship.x > enemy.hitbox[0] and ship.x < enemy.hitbox[0] + enemy.hitbox[2]):
+                ship.hit()
+                score -= 100
+                break
+
+
 
     bgcount += 1
     if bgcount > 3:
